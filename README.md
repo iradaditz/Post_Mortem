@@ -62,10 +62,15 @@ Finale Project
   6. Настроен backup-скрипт: /home/ec2-user/backup_log_http.sh
 
 ''' #!/bin/bash
+
 #
+
 LOG_DIR="/var/log/httpd" (Что нужно архивировать)
+
 BACKUP_DIR="/home/ec2-user/backup" (Директория где будут сохраняться архивы)
+
 DATE=$(date +%Y%m%d-%H%M) 
+
 ARCHIVE="$BACKUP_DIR/Loghttp-$DATE.tar.gz" (Полный путь и имя архива)
 
 mkdir -p "$BACKUP_DIR" (Создана папка для бэкапа)
@@ -73,21 +78,27 @@ mkdir -p "$BACKUP_DIR" (Создана папка для бэкапа)
 sudo tar -czf $ARCHIVE $LOG_DIR 
 
 sudo systemctl stop httpd
+
 sudo rm -rf "$LOG_DIR/access_log"
+
 sudo systemctl start httpd
 
 find "$BACKUP_DIR" -type f -name "Loghttp*.gz" -mtime +3 -exec rm -rf {} \; (Удаляем архивы старше 3 дней, чтобы диск не заполнялся) '''
 
 После этого скрипт сделан исполняемым:
+
 chmod +x backup_log_http.sh
 
 Итог
+
 После:
 - восстановления конфигурационного файла
 - удаления лишних логов
 - правки IP-адреса
 - исправление cron-задачи
+
 сайт стал успешно доступен по адресу: "http://3.69.26.193"
+
 
 Рекомендации на будущее:
 •	Настроить мониторинг дискового пространства с автоматическими оповещениями (cron + df + mail)
