@@ -33,22 +33,35 @@ Finale Project
   sudo rm -rf /var/10g/httpd/access_10g-20240402
   
   После этого в системе было освобожденыо более 7 GB.
+  
   4. Проблема с IP-адресом после перезапуска
+  
   После перезапуска сервера был изменен IP на 18.153.51.162
+  
   Проверка и редактирование файла LocalSettings. php:
   nano /var/www/html/MediaWiki/LocalSettings.php
+  
   Изменена переменная:
   $wgServer = "https://18.153.51.162" на $wgServer = "http://3.69.26.193"
+  
   5. Проблема с cron задачей.
   Открытие и редактирование:
+  
   sudo crontab -e
+  
   Закомментирована строка:
+  
   #***** tar -czf /var/log/httpd/log_$(date +(%V\%m\%d).tar.gz -C /var/log/httpd (которая создаёт сжатую копию всех логов Apache за момент запуска и сохраняет её)
+  
   0 3 * * * /home/ec2-user/backup_log_http.sh (Запуск скрипта резервного копирования логов каждые 3 минуты)
+  
   Удалены существующие ненужные архивы:
+  
   sudo rm-rf /var/10g/httpd/10g_*.tar.gz
+  
   6. Настроен backup-скрипт: /home/ec2-user/backup_log_http.sh
-#!/bin/bash
+
+''' #!/bin/bash
 #
 LOG_DIR="/var/log/httpd" (Что нужно архивировать)
 BACKUP_DIR="/home/ec2-user/backup" (Директория где будут сохраняться архивы)
@@ -63,7 +76,7 @@ sudo systemctl stop httpd
 sudo rm -rf "$LOG_DIR/access_log"
 sudo systemctl start httpd
 
-find "$BACKUP_DIR" -type f -name "Loghttp*.gz" -mtime +3 -exec rm -rf {} \; (Удаляем архивы старше 3 дней, чтобы диск не заполнялся)
+find "$BACKUP_DIR" -type f -name "Loghttp*.gz" -mtime +3 -exec rm -rf {} \; (Удаляем архивы старше 3 дней, чтобы диск не заполнялся) '''
 
 После этого скрипт сделан исполняемым:
 chmod +x backup_log_http.sh
